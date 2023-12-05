@@ -1,2 +1,0 @@
-Cliente 1: jm,CI: 123,correo:  321,telefono: 333,Dias de estadia suite: 3
-Cliente 2: waeqw,CI: 321,correo:  3212,telefono: 123124,Dias de estadia suite: 3
