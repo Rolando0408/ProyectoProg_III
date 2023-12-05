@@ -24,7 +24,7 @@ var
 
 	cliente: array [1..fin] of client;
 	ninos: array[1..fin] of nino;
-	opc, val_str, opc_n, opc_v, opc_h: string;
+	opc, val_str, opc_n, opc_v, opc_h, opc_a: string;
 	i,j, val_int, n_personas, n_ninos, n_dias: integer;
 	validar_n, validar_c, validacion_n, n_val: boolean;
 	individual, acompanado, grupo_familia: text;
@@ -246,7 +246,7 @@ var
 		if opc_n = '1' then
 		begin
 			repeat//para validar que sea un numero
-				write('Ingrese la cantidad de niños que estaran con usted: ');
+				write('Ingrese la cantidad de ninos que estaran con usted: ');
 				readln(val_str);
 				validar_ninos;
 			until n_val;//hasta que sea un numero
@@ -363,8 +363,8 @@ var
 				until not validar_n;
 				cliente[j].dias:= n_dias;
 			end;//del for principal
-		end//del if
-		else if (n_ninos <> 0) then
+		end;//del if
+		if (n_ninos > 0) then
 		begin
 			for j:= 1 to n_ninos do
 			begin						
@@ -374,7 +374,7 @@ var
 					validar_nombre(ninos[j].nombre);
 				until not validacion_n;
 				repeat
-					writeln('ingrese la edad del niño ', j, ': ');
+					writeln('ingrese la edad del nino ', j, ': ');
 					readln(ninos[j].edad);
 					validar(ninos[j].edad);
 					mensaje_v(validar_n);
@@ -391,6 +391,134 @@ var
 		precio_t:= habitacion * dias;
 		writeln('Y el monto total a cancelar por su habitacion es de $.', precio_t:0:2);
 	end;
+
+
+	procedure most_ninos;
+	begin
+		for i:= 1 to n_ninos do
+		begin
+			writeln('Nino ', i, ': ', ninos[i].nombre);
+			writeln('Edad: ', ninos[i].edad)
+		end;
+	end;//del procedimiento
+	
+	procedure most_personas;
+	begin
+		for i:=1 to n_personas do
+			begin
+				writeln('Cliente ', i);
+				writeln('Nombre: ', cliente[i].nombre);
+				writeln('Cedula: ', cliente[i].cedula);
+				writeln('Correo: ', cliente[i].correo);
+				writeln('Telefono: ', cliente[i].telefono);
+				writeln('Dias est: ', cliente[i].dias);
+				writeln('Presione enter para ver el siguiene cliente ingresado...');
+				readln;
+			end;
+	end;//del procedimiento
+	
+	procedure EditarCliente(cedula: string);
+	var
+		i, opcion: integer;
+		clienteEncontrado: boolean;
+	begin
+		clienteEncontrado := false;
+		for i := 1 to Length(cliente) do
+		begin
+			if cliente[i].cedula = cedula then
+			begin
+			clienteEncontrado := true;
+		
+			writeln('Selecciona el dato a editar:');
+			writeln('1. Nombre');
+			writeln('2. Cédula');
+			writeln('3. Correo');
+			writeln('4. Teléfono');
+			writeln('5. Días');
+			readln(opcion);
+
+			case opcion of
+				1: begin
+					write('Ingresa el nuevo nombre: ');
+					readln(cliente[i].nombre);
+				end;//del case opc 1
+				2: begin
+					write('Ingresa la nueva cédula: ');
+					readln(cliente[i].cedula);
+				end;//del case opc 2
+				3: begin
+					write('Ingresa el nuevo correo: ');
+					readln(cliente[i].correo);
+				end;//del case opc 3
+				4: begin
+					write('Ingresa el nuevo teléfono: ');
+					readln(cliente[i].telefono);
+				end;//del case opc 4
+				5: begin
+					write('Ingresa los nuevos días: ');
+					readln(cliente[i].dias);
+				end;//del case opc 5
+			end;//del case
+
+			writeln('Cliente editado exitosamente.');
+			break;
+		end;
+	end;
+
+		if not clienteEncontrado then
+			writeln('La cédula ingresada no está registrada.');
+	end;//del procedimiento
+
+	
+	
+	
+	
+	procedure Mostrar_arch(var a:text);
+	var
+		linea: string;
+		opcion: integer;
+	begin
+		reset(a); //se abre el archivo
+		writeln('A continuacion se le mostraran todos los clientes ingresados en el archivo.');
+		writeln('Presione enter para continuar...');
+		readln;
+		//leer hasta el final del archivo
+		while not eof(a) do
+		begin
+			readln(a, linea);
+			writeln(linea);
+			writeln('Presione 1 para editar este cliente, 2 para ver el siguiente cliente del archivo...');
+			readln(opcion);
+			if opcion = 1 then
+				EditarCliente(linea);
+			end;
+
+		close(a); //se cierra el archivo
+	end;//del procedimiento
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
 
 	
 begin//principal
@@ -419,7 +547,7 @@ begin//principal
 			repeat//para validar que sea un numero
 			repeat//para volver a mostrar 
 				clrscr;
-				writeln('Para las reservaciones de un adulto tenemos las seguientes habitacion disponible:');
+				writeln('Para las reservaciones de un adulto tenemos las seguientes habitaciones disponibles:');
 				writeln('1. Sencilla');
 				writeln('2. Suite');
 				readln(opc_h);
@@ -452,17 +580,8 @@ begin//principal
 						writeln('Presione enter para mostrar el registro de las personas ingresadas');
 						readln;
 						clrscr;
-						for i:=1 to n_personas do
-						begin
-							writeln('Cliente ', i);
-							writeln('Nombre: ', cliente[i].nombre);
-							writeln('Cedula: ', cliente[i].cedula);
-							writeln('Correo: ', cliente[i].correo);
-							writeln('Telefono: ', cliente[i].telefono);
-							writeln('Dias est: ', cliente[i].dias);
-							writeln('Presione enter para ver el siguiene cliente ingresado...');
-							readln;
-						end;
+						most_personas;
+						most_ninos;
 						for i:= 1 to n_personas do
 						begin
 							writeln(individual, 'Cliente ', i, ': ', cliente[i].nombre, ',CI: ', cliente[i].cedula, ',correo:  ', cliente[i].correo, ',telefono: ', cliente[i].telefono, ',Dias de estadia sencilla: ', cliente[i].dias);
@@ -501,17 +620,8 @@ begin//principal
 						writeln('Presione enter para mostrar el registro de las personas ingresadas');
 						readln;
 						clrscr;
-						for i:=1 to n_personas do
-						begin
-							writeln('Cliente ', i);
-							writeln('Nombre: ', cliente[i].nombre);
-							writeln('Cedula: ', cliente[i].cedula);
-							writeln('Correo: ', cliente[i].correo);
-							writeln('Telefono: ', cliente[i].telefono);
-							writeln('Dias est: ', cliente[i].dias);
-							writeln('Presione enter para ver el siguiene cliente ingresado...');
-							readln;
-						end;
+						most_personas;
+						most_ninos;
 						for i:= 1 to n_personas do
 						begin
 							writeln(individual, 'Cliente ', i, ': ', cliente[i].nombre, ',CI: ', cliente[i].cedula, ',correo:  ', cliente[i].correo, ',telefono: ', cliente[i].telefono, ',Dias de estadia suite: ', cliente[i].dias);
@@ -535,7 +645,7 @@ begin//principal
 			repeat//para validar que sea un numero
 			repeat//para volver a mostrar 
 				clrscr;
-				writeln('Para las reservaciones de dos personas tenemos las seguientes habitacion disponible:');
+				writeln('Para las reservaciones de dos personas tenemos las seguientes habitaciones disponibles:');
 				writeln('1. Doble');
 				writeln('2. Suite');
 				readln(opc_h);
@@ -568,17 +678,8 @@ begin//principal
 						writeln('Presione enter para mostrar el registro de las personas ingresadas');
 						readln;
 						clrscr;
-						for i:=1 to n_personas do
-						begin
-							writeln('Cliente ', i);
-							writeln('Nombre: ', cliente[i].nombre);
-							writeln('Cedula: ', cliente[i].cedula);
-							writeln('Correo: ', cliente[i].correo);
-							writeln('Telefono: ', cliente[i].telefono);
-							writeln('Dias est: ', cliente[i].dias);
-							writeln('Presione enter para ver el siguiene cliente ingresado...');
-							readln;
-						end;
+						most_personas;
+						most_ninos;
 						for i:= 1 to n_personas do
 						begin
 							writeln(acompanado, 'Cliente ', i, ': ', cliente[i].nombre, ',CI: ', cliente[i].cedula, ',correo:  ', cliente[i].correo, ',telefono: ', cliente[i].telefono, ',Dias de estadia doble: ', cliente[i].dias);
@@ -617,17 +718,8 @@ begin//principal
 						writeln('Presione enter para mostrar el registro de las personas ingresadas');
 						readln;
 						clrscr;
-						for i:=1 to n_personas do
-						begin
-							writeln('Cliente ', i);
-							writeln('Nombre: ', cliente[i].nombre);
-							writeln('Cedula: ', cliente[i].cedula);
-							writeln('Correo: ', cliente[i].correo);
-							writeln('Telefono: ', cliente[i].telefono);
-							writeln('Dias est: ', cliente[i].dias);
-							writeln('Presione enter para ver el siguiene cliente ingresado...');
-							readln;
-						end;
+						most_personas;
+						most_ninos;
 						for i:= 1 to n_personas do
 						begin
 							writeln(acompanado, 'Cliente ', i, ': ', cliente[i].nombre, ',CI: ', cliente[i].cedula, ',correo:  ', cliente[i].correo, ',telefono: ', cliente[i].telefono, ',Dias de estadia suite: ', cliente[i].dias);
@@ -651,7 +743,7 @@ begin//principal
 			repeat//para validar que sea un numero
 			repeat//para volver a mostrar 
 				clrscr;
-				writeln('Para las reservaciones de un grupo de personas tenemos las seguientes habitacion disponible:');
+				writeln('Para las reservaciones de un grupo de personas tenemos las seguientes habitaciones disponibles:');
 				writeln('1. Family Room');
 				writeln('2. Suite');
 				readln(opc_h);
@@ -684,17 +776,8 @@ begin//principal
 						writeln('Presione enter para mostrar el registro de las personas ingresadas');
 						readln;
 						clrscr;
-						for i:=1 to n_personas do
-						begin
-							writeln('Cliente ', i);
-							writeln('Nombre: ', cliente[i].nombre);
-							writeln('Cedula: ', cliente[i].cedula);
-							writeln('Correo: ', cliente[i].correo);
-							writeln('Telefono: ', cliente[i].telefono);
-							writeln('Dias est: ', cliente[i].dias);
-							writeln('Presione enter para ver el siguiene cliente ingresado...');
-							readln;
-						end;
+						most_personas;
+						most_ninos;
 						for i:= 1 to n_personas do
 						begin
 							writeln(grupo_familia, 'Cliente ', i, ': ', cliente[i].nombre, ',CI: ', cliente[i].cedula, ',correo:  ', cliente[i].correo, ',telefono: ', cliente[i].telefono, ',Dias de estadia family room: ', cliente[i].dias);
@@ -733,17 +816,8 @@ begin//principal
 						writeln('Presione enter para mostrar el registro de las personas ingresadas');
 						readln;
 						clrscr;
-						for i:=1 to n_personas do
-						begin
-							writeln('Cliente ', i);
-							writeln('Nombre: ', cliente[i].nombre);
-							writeln('Cedula: ', cliente[i].cedula);
-							writeln('Correo: ', cliente[i].correo);
-							writeln('Telefono: ', cliente[i].telefono);
-							writeln('Dias est: ', cliente[i].dias);
-							writeln('Presione enter para ver el siguiene cliente ingresado...');
-							readln;
-						end;
+						most_personas;
+						most_ninos;
 						for i:= 1 to n_personas do
 						begin
 							writeln(grupo_familia, 'Cliente ', i, ': ', cliente[i].nombre, ',CI: ', cliente[i].cedula, ',correo:  ', cliente[i].correo, ',telefono: ', cliente[i].telefono, ',Dias de estadia suite: ', cliente[i].dias);
@@ -759,7 +833,31 @@ begin//principal
 					end;
 					end;
 				until opc_v = '1';//para mostrar habitacion 		
-			end
+			end;
+			writeln('Para mostrar los archivos de clientes ingrese que tipo de archivo desea ver: ');
+			writeln('1. Individual');
+			writeln('2. Acompanado');
+			writeln('3. grupo/familia');
+			readln(opc_a);
+			case opc_a of
+				'1':
+				begin
+					Mostrar_arch(individual);
+				end;//opc 1
+				
+				'2':
+				begin
+					Mostrar_arch(acompanado);
+				end;
+		
+				'3': 
+				begin
+					Mostrar_arch(grupo_familia);
+				end;
+				
+			end; //del case para mostrar archivos
 		end;//de la opc 1
 	end;//del case opc principal
 end.//principal
+//Rolando Rivas
+//Jesus Rivas
